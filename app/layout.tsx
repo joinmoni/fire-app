@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Moni FIRE",
+  title: "FIRE with Moni",
   description:
     "Calculate your path to Financial Independence and Retire Early (FIRE). Discover when you can achieve FIRE, track your progress, and create a personalized roadmap to financial freedom. Our tools help you determine your FIRE age, optimize your savings rate, and plan your investment strategy for a secure early retirement.",
   icons: {
