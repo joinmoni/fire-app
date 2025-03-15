@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
+import { CalendarPlus } from "lucide-react";
 
 interface MoniLayoutProps {
   children: React.ReactNode;
@@ -70,6 +71,15 @@ export function MoniLayout({ children }: MoniLayoutProps) {
             <Button
               variant="outline"
               size="sm"
+              className="text-moni-orange hover:text-moni-orange/90 hover:bg-moni-orange/10"
+              onClick={() => window.open("https://lu.ma/asd74i6j", "_blank")}
+            >
+              <CalendarPlus className="mr-2 h-4 w-4" />
+              Join Webinar
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
               onClick={handleSignOut}
               disabled={isSigningOut}
             >
@@ -103,6 +113,15 @@ export function MoniLayout({ children }: MoniLayoutProps) {
                   onClick={() => router.push("/fire-calculator")}
                 >
                   What's my #?
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    window.open("https://lu.ma/asd74i6j", "_blank")
+                  }
+                  className="text-moni-orange"
+                >
+                  <CalendarPlus className="mr-2 h-4 w-4" />
+                  Join Webinar
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleSignOut}
