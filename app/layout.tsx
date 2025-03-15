@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Moni FIRE",
+  title: "FIRE with Moni",
   description: "Achieve Financial Independence and Retire Early",
   icons: {
     icon: "/favicon.ico",
