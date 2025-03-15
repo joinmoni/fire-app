@@ -5,8 +5,22 @@ export const metadata: Metadata = {
   title: "Moni FIRE",
   description: "Achieve Financial Independence and Retire Early",
   icons: {
-    icon: "/moni-icon.svg",
-    apple: "/moni-icon.svg",
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
+  openGraph: {
+    images: [
+      {
+        url: "/moni-icon.svg",
+        width: 300,
+        height: 300,
+        alt: "Moni FIRE Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/moni-icon.svg"],
   },
 };
 
