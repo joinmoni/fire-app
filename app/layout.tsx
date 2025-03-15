@@ -16,17 +16,19 @@ export const metadata: Metadata = {
       "Calculate your path to Financial Independence and Retire Early (FIRE). Discover when you can achieve FIRE, track your progress, and create a personalized roadmap to financial freedom.",
     images: [
       {
-        url: "/moni-icon.svg",
-        width: 300,
-        height: 300,
-        alt: "Moni FIRE Logo",
+        url: "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/op/4078051a-945c-49dc-ac4d-7707657057f4.png",
+        width: 400,
+        height: 400,
+        alt: "Women that FIRE Webinar",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary",
-    images: ["/moni-icon.svg"],
+    images: [
+      "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=400,height=400/event-covers/op/4078051a-945c-49dc-ac4d-7707657057f4.png",
+    ],
   },
 };
 
