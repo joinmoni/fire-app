@@ -17,7 +17,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, CalendarPlus, Settings } from "lucide-react";
+import {
+  Menu,
+  CalendarPlus,
+  Settings,
+  Home,
+  LayoutDashboard,
+  Calculator,
+  LogOut,
+} from "lucide-react";
 
 interface MoniLayoutProps {
   children: React.ReactNode;
@@ -44,13 +52,14 @@ export function MoniLayout({ children }: MoniLayoutProps) {
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <MoniLogo />
 
-          {/* Desktop Navigation - now styled as buttons */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => router.push("/welcome")}
             >
+              <Home className="mr-2 h-4 w-4" />
               Home
             </Button>
             <Button
@@ -58,6 +67,7 @@ export function MoniLayout({ children }: MoniLayoutProps) {
               size="sm"
               onClick={() => router.push("/dashboard")}
             >
+              <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard
             </Button>
             <Button
@@ -65,6 +75,7 @@ export function MoniLayout({ children }: MoniLayoutProps) {
               size="sm"
               onClick={() => router.push("/fire-calculator")}
             >
+              <Calculator className="mr-2 h-4 w-4" />
               What's my #?
             </Button>
             <Button
@@ -96,7 +107,10 @@ export function MoniLayout({ children }: MoniLayoutProps) {
                   Signing out...
                 </>
               ) : (
-                "Sign Out"
+                <>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </>
               )}
             </Button>
           </div>
@@ -111,14 +125,17 @@ export function MoniLayout({ children }: MoniLayoutProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem onClick={() => router.push("/welcome")}>
+                  <Home className="mr-2 h-4 w-4" />
                   Home
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                  <LayoutDashboard className="mr-2 h-4 w-4" />
                   Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => router.push("/fire-calculator")}
                 >
+                  <Calculator className="mr-2 h-4 w-4" />
                   What's my #?
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push("/settings")}>
@@ -144,7 +161,10 @@ export function MoniLayout({ children }: MoniLayoutProps) {
                       Signing out...
                     </>
                   ) : (
-                    "Sign Out"
+                    <>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </>
                   )}
                 </DropdownMenuItem>
               </DropdownMenuContent>
