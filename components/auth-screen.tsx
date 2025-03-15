@@ -163,8 +163,11 @@ export function AuthScreen() {
                 <CommunityBadge />
               </div>
               <CardTitle className="text-2xl">FIRE Dashboard</CardTitle>
-              <CardDescription>
-                Track your journey to financial freedom
+              <CardDescription className="font-semibold">
+                Achieve Financial Independence, and Retire Early
+                <p className="font-light">
+                  Track your journey to financial freedom
+                </p>
               </CardDescription>
             </CardHeader>
             <CardContent>
