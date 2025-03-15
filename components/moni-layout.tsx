@@ -11,6 +11,13 @@ import { signOut } from "firebase/auth";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Menu } from "lucide-react";
 
 interface MoniLayoutProps {
   children: React.ReactNode;
@@ -36,27 +43,30 @@ export function MoniLayout({ children }: MoniLayoutProps) {
       <header className="border-b bg-white">
         <div className="container mx-auto px-4 py-3 flex justify-between items-center">
           <MoniLogo />
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link
-              href="/welcome"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+
+          {/* Desktop Navigation - now styled as buttons */}
+          <div className="hidden md:flex items-center space-x-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/welcome")}
             >
               Home
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/dashboard")}
             >
               Dashboard
-            </Link>
-            <Link
-              href="/fire-calculator"
-              className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push("/fire-calculator")}
             >
               FIRE Calculator
-            </Link>
-          </nav>
-          <div className="flex items-center space-x-4">
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -72,6 +82,43 @@ export function MoniLayout({ children }: MoniLayoutProps) {
                 "Sign Out"
               )}
             </Button>
+          </div>
+
+          {/* Mobile Menu */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => router.push("/welcome")}>
+                  Home
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/fire-calculator")}
+                >
+                  FIRE Calculator
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  disabled={isSigningOut}
+                >
+                  {isSigningOut ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Signing out...
+                    </>
+                  ) : (
+                    "Sign Out"
+                  )}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>

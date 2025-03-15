@@ -23,7 +23,7 @@ export function WelcomeScreen({ userId }) {
           Community Finance for Africa
         </div>
         <h1 className="text-4xl font-bold tracking-tight">
-          Financial Independece, Retire Early
+          Build Lasting Wealth
         </h1>
         <p className="mt-4 text-xl text-muted-foreground">
           Let's get started on your path to financial freedom

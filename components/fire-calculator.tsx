@@ -1,26 +1,63 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Slider } from "@/components/ui/slider"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { ArrowRight, Calculator, BarChart3, ArrowLeft, InfoIcon } from "lucide-react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "@/components/ui/chart"
-import { getUserFinancialData, updateUserFinancialData } from "@/lib/firestore"
-import { useCurrency } from "@/lib/currency-context"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  ArrowRight,
+  Calculator,
+  BarChart3,
+  ArrowLeft,
+  InfoIcon,
+} from "lucide-react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "@/components/ui/chart";
+import { getUserFinancialData, updateUserFinancialData } from "@/lib/firestore";
+import { useCurrency } from "@/lib/currency-context";
 
 const formSchema = z.object({
-  currentAge: z.coerce.number().min(18, "Age must be at least 18").max(100, "Age must be less than 100"),
-  targetRetirementAge: z.coerce.number().min(18, "Age must be at least 18").max(100, "Age must be less than 100"),
+  currentAge: z.coerce
+    .number()
+    .min(18, "Age must be at least 18")
+    .max(100, "Age must be less than 100"),
+  targetRetirementAge: z.coerce
+    .number()
+    .min(18, "Age must be at least 18")
+    .max(100, "Age must be less than 100"),
   annualExpenses: z.coerce.number().min(0, "Annual expenses must be positive"),
-  currentInvestments: z.coerce.number().min(0, "Current investments must be positive"),
+  currentInvestments: z.coerce
+    .number()
+    .min(0, "Current investments must be positive"),
   annualSavings: z.coerce.number().min(0, "Annual savings must be positive"),
   withdrawalRate: z.coerce
     .number()
@@ -30,14 +67,14 @@ const formSchema = z.object({
     .number()
     .min(1, "Expected return must be at least 1%")
     .max(20, "Expected return must be less than 20%"),
-})
+});
 
 export function FireCalculator({ userId }) {
-  const router = useRouter()
-  const [results, setResults] = useState(null)
-  const [projectionData, setProjectionData] = useState([])
-  const [saving, setSaving] = useState(false)
-  const { formatCurrency, currencySymbol } = useCurrency()
+  const router = useRouter();
+  const [results, setResults] = useState(null);
+  const [projectionData, setProjectionData] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const { formatCurrency, currencySymbol } = useCurrency();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -50,30 +87,30 @@ export function FireCalculator({ userId }) {
       withdrawalRate: 4,
       expectedReturn: 8,
     },
-  })
+  });
 
   const onSubmit = async (values) => {
     // Calculate FIRE number
-    const fireNumber = values.annualExpenses * (100 / values.withdrawalRate)
+    const fireNumber = values.annualExpenses * (100 / values.withdrawalRate);
 
     // Calculate years to FIRE
     const yearsToFire = calculateYearsToFire(
       values.currentInvestments,
       fireNumber,
       values.annualSavings,
-      values.expectedReturn / 100,
-    )
+      values.expectedReturn / 100
+    );
 
     // Calculate actual retirement age
-    const actualRetirementAge = values.currentAge + yearsToFire
+    const actualRetirementAge = values.currentAge + yearsToFire;
 
     // Calculate required annual savings to reach target retirement age
     const requiredAnnualSavings = calculateRequiredAnnualSavings(
       values.currentInvestments,
       fireNumber,
       values.targetRetirementAge - values.currentAge,
-      values.expectedReturn / 100,
-    )
+      values.expectedReturn / 100
+    );
 
     // Generate projection data
     const projData = generateProjectionData(
@@ -82,10 +119,10 @@ export function FireCalculator({ userId }) {
       values.currentInvestments,
       values.annualSavings,
       values.expectedReturn / 100,
-      fireNumber,
-    )
+      fireNumber
+    );
 
-    setProjectionData(projData)
+    setProjectionData(projData);
 
     // Set results
     setResults({
@@ -95,17 +132,17 @@ export function FireCalculator({ userId }) {
       requiredAnnualSavings,
       onTrack: actualRetirementAge <= values.targetRetirementAge,
       gap: actualRetirementAge - values.targetRetirementAge,
-    })
-  }
+    });
+  };
 
   const saveToProfile = async () => {
-    setSaving(true)
+    setSaving(true);
     try {
       // Get current user data
-      const userData = await getUserFinancialData(userId)
+      const userData = await getUserFinancialData(userId);
 
       // Update with FIRE calculator data
-      const values = form.getValues()
+      const values = form.getValues();
       const updatedData = {
         ...userData,
         goals: {
@@ -119,20 +156,20 @@ export function FireCalculator({ userId }) {
           ...userData.assets,
           investments: values.currentInvestments,
         },
-      }
+      };
 
-      await updateUserFinancialData(userId, updatedData)
-      router.push("/dashboard")
+      await updateUserFinancialData(userId, updatedData);
+      router.push("/dashboard");
     } catch (error) {
-      console.error("Error saving data:", error)
+      console.error("Error saving data:", error);
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   return (
     <div className="container max-w-5xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
+      {/* <div className="flex items-center justify-between mb-8">
         <Button variant="ghost" onClick={() => router.push("/welcome")}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Welcome
@@ -141,25 +178,32 @@ export function FireCalculator({ userId }) {
           Go to Dashboard
           <BarChart3 className="ml-2 h-4 w-4" />
         </Button>
-      </div>
+      </div> */}
 
       <div className="text-center mb-8">
         <div className="inline-block mb-4 px-4 py-1 bg-moni-green text-moni-darkGreen rounded-full text-sm font-medium">
           Powered by Moni
         </div>
         <h1 className="text-3xl font-bold">My FIRE Numbers</h1>
-        <p className="text-muted-foreground mt-2">Calculate how much you need to achieve financial independence</p>
+        <p className="text-muted-foreground mt-2">
+          Calculate how much you need to achieve financial independence
+        </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
         <Card>
           <CardHeader>
             <CardTitle>Your Information</CardTitle>
-            <CardDescription>Enter your financial details to calculate your path to FIRE</CardDescription>
+            <CardDescription>
+              Enter your financial details to calculate your path to FIRE
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -197,11 +241,15 @@ export function FireCalculator({ userId }) {
                       <FormLabel>Annual Expenses in Retirement</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2">{currencySymbol}</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                            {currencySymbol}
+                          </span>
                           <Input type="number" className="pl-7" {...field} />
                         </div>
                       </FormControl>
-                      <FormDescription>How much you plan to spend each year in retirement</FormDescription>
+                      <FormDescription>
+                        How much you plan to spend each year in retirement
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -215,11 +263,15 @@ export function FireCalculator({ userId }) {
                       <FormLabel>Current Investments</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2">{currencySymbol}</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                            {currencySymbol}
+                          </span>
                           <Input type="number" className="pl-7" {...field} />
                         </div>
                       </FormControl>
-                      <FormDescription>Total value of your current investment portfolio</FormDescription>
+                      <FormDescription>
+                        Total value of your current investment portfolio
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -233,11 +285,15 @@ export function FireCalculator({ userId }) {
                       <FormLabel>Annual Savings</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2">{currencySymbol}</span>
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2">
+                            {currencySymbol}
+                          </span>
                           <Input type="number" className="pl-7" {...field} />
                         </div>
                       </FormControl>
-                      <FormDescription>How much you save and invest each year</FormDescription>
+                      <FormDescription>
+                        How much you save and invest each year
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -260,7 +316,8 @@ export function FireCalculator({ userId }) {
                         />
                       </FormControl>
                       <FormDescription>
-                        Percentage of portfolio you'll withdraw annually in retirement (4% is traditional)
+                        Percentage of portfolio you'll withdraw annually in
+                        retirement (4% is traditional)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -284,14 +341,18 @@ export function FireCalculator({ userId }) {
                         />
                       </FormControl>
                       <FormDescription>
-                        Expected annual return on your investments (7-10% is typical for long-term stock market returns)
+                        Expected annual return on your investments (7-10% is
+                        typical for long-term stock market returns)
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <Button type="submit" className="w-full bg-moni-orange hover:bg-moni-orange/90 text-white">
+                <Button
+                  type="submit"
+                  className="w-full bg-moni-orange hover:bg-moni-orange/90 text-white"
+                >
                   Calculate
                   <Calculator className="ml-2 h-4 w-4" />
                 </Button>
@@ -306,38 +367,60 @@ export function FireCalculator({ userId }) {
               <Card>
                 <CardHeader>
                   <CardTitle>Your FIRE Results</CardTitle>
-                  <CardDescription>Based on your inputs, here's your path to financial independence</CardDescription>
+                  <CardDescription>
+                    Based on your inputs, here's your path to financial
+                    independence
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-muted p-4 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Your FIRE Number</p>
-                      <p className="text-2xl font-bold">{formatCurrency(results.fireNumber)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Your FIRE Number
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {formatCurrency(results.fireNumber)}
+                      </p>
                     </div>
                     <div className="bg-muted p-4 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Years to FIRE</p>
-                      <p className="text-2xl font-bold">{results.yearsToFire.toFixed(1)} years</p>
+                      <p className="text-sm text-muted-foreground">
+                        Years to FIRE
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {results.yearsToFire.toFixed(1)} years
+                      </p>
                     </div>
                   </div>
 
                   <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Projected Retirement Age</p>
-                    <p className="text-2xl font-bold">{results.actualRetirementAge.toFixed(1)} years old</p>
+                    <p className="text-sm text-muted-foreground">
+                      Projected Retirement Age
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {results.actualRetirementAge.toFixed(1)} years old
+                    </p>
                     {results.onTrack ? (
                       <p className="text-sm text-green-600 mt-1">
-                        You're on track to retire {Math.abs(results.gap).toFixed(1)} years before your target!
+                        You're on track to retire{" "}
+                        {Math.abs(results.gap).toFixed(1)} years before your
+                        target!
                       </p>
                     ) : (
                       <p className="text-sm text-amber-600 mt-1">
-                        You'll reach FIRE {results.gap.toFixed(1)} years after your target retirement age
+                        You'll reach FIRE {results.gap.toFixed(1)} years after
+                        your target retirement age
                       </p>
                     )}
                   </div>
 
                   {!results.onTrack && (
                     <div className="bg-muted p-4 rounded-lg">
-                      <p className="text-sm text-muted-foreground">Required Annual Savings to Meet Target</p>
-                      <p className="text-2xl font-bold">{formatCurrency(results.requiredAnnualSavings)}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Required Annual Savings to Meet Target
+                      </p>
+                      <p className="text-2xl font-bold">
+                        {formatCurrency(results.requiredAnnualSavings)}
+                      </p>
                       <p className="text-sm text-muted-foreground mt-1">
                         To retire by age {form.getValues().targetRetirementAge}
                       </p>
@@ -348,8 +431,19 @@ export function FireCalculator({ userId }) {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={projectionData}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="age" label={{ value: "Age", position: "insideBottomRight", offset: 0 }} />
-                        <YAxis tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`} />
+                        <XAxis
+                          dataKey="age"
+                          label={{
+                            value: "Age",
+                            position: "insideBottomRight",
+                            offset: 0,
+                          }}
+                        />
+                        <YAxis
+                          tickFormatter={(value) =>
+                            `${(value / 1000000).toFixed(0)}M`
+                          }
+                        />
                         <Tooltip
                           formatter={(value) => formatCurrency(value)}
                           labelFormatter={(value) => `Age: ${value}`}
@@ -381,19 +475,37 @@ export function FireCalculator({ userId }) {
                           <>
                             <li>
                               Increase your annual savings by{" "}
-                              {formatCurrency(results.requiredAnnualSavings - form.getValues().annualSavings)} to reach
-                              your target retirement age.
+                              {formatCurrency(
+                                results.requiredAnnualSavings -
+                                  form.getValues().annualSavings
+                              )}{" "}
+                              to reach your target retirement age.
                             </li>
-                            <li>Consider reducing your annual expenses in retirement to lower your FIRE number.</li>
+                            <li>
+                              Consider reducing your annual expenses in
+                              retirement to lower your FIRE number.
+                            </li>
                           </>
                         ) : (
                           <>
-                            <li>You're on track to reach FIRE before your target age!</li>
-                            <li>Consider if you want to retire even earlier or increase your retirement spending.</li>
+                            <li>
+                              You're on track to reach FIRE before your target
+                              age!
+                            </li>
+                            <li>
+                              Consider if you want to retire even earlier or
+                              increase your retirement spending.
+                            </li>
                           </>
                         )}
-                        <li>Ensure your investments are properly diversified to achieve your target returns.</li>
-                        <li>Review and update your plan regularly as your financial situation changes.</li>
+                        <li>
+                          Ensure your investments are properly diversified to
+                          achieve your target returns.
+                        </li>
+                        <li>
+                          Review and update your plan regularly as your
+                          financial situation changes.
+                        </li>
                       </ul>
                     </AlertDescription>
                   </Alert>
@@ -416,12 +528,18 @@ export function FireCalculator({ userId }) {
             <Card>
               <CardHeader>
                 <CardTitle>Your Results Will Appear Here</CardTitle>
-                <CardDescription>Fill out the form and click "Calculate" to see your FIRE projections</CardDescription>
+                <CardDescription>
+                  Fill out the form and click "Calculate" to see your FIRE
+                  projections
+                </CardDescription>
               </CardHeader>
               <CardContent className="h-[400px] flex items-center justify-center text-muted-foreground">
                 <div className="text-center">
                   <Calculator className="h-12 w-12 mx-auto mb-4 opacity-30" />
-                  <p>Enter your information to calculate your path to financial independence</p>
+                  <p>
+                    Enter your information to calculate your path to financial
+                    independence
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -429,47 +547,63 @@ export function FireCalculator({ userId }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Calculate years to reach financial independence
-function calculateYearsToFire(currentInvestments, targetAmount, annualSavings, annualReturnRate) {
+function calculateYearsToFire(
+  currentInvestments,
+  targetAmount,
+  annualSavings,
+  annualReturnRate
+) {
   // If already at target
-  if (currentInvestments >= targetAmount) return 0
+  if (currentInvestments >= targetAmount) return 0;
 
   // If no savings and no returns
-  if (annualSavings <= 0 && annualReturnRate <= 0) return Number.POSITIVE_INFINITY
+  if (annualSavings <= 0 && annualReturnRate <= 0)
+    return Number.POSITIVE_INFINITY;
 
-  let years = 0
-  let netWorth = currentInvestments
+  let years = 0;
+  let netWorth = currentInvestments;
 
   while (netWorth < targetAmount && years < 100) {
-    netWorth = netWorth * (1 + annualReturnRate) + annualSavings
-    years++
+    netWorth = netWorth * (1 + annualReturnRate) + annualSavings;
+    years++;
   }
 
-  return years
+  return years;
 }
 
 // Calculate required annual savings to reach FIRE by target age
-function calculateRequiredAnnualSavings(currentInvestments, targetAmount, yearsToRetirement, annualReturnRate) {
-  if (yearsToRetirement <= 0) return Number.POSITIVE_INFINITY
+function calculateRequiredAnnualSavings(
+  currentInvestments,
+  targetAmount,
+  yearsToRetirement,
+  annualReturnRate
+) {
+  if (yearsToRetirement <= 0) return Number.POSITIVE_INFINITY;
 
   // Calculate future value of current investments
-  const futureValueOfCurrentInvestments = currentInvestments * Math.pow(1 + annualReturnRate, yearsToRetirement)
+  const futureValueOfCurrentInvestments =
+    currentInvestments * Math.pow(1 + annualReturnRate, yearsToRetirement);
 
   // Calculate amount needed beyond growth of current investments
-  const additionalAmountNeeded = Math.max(0, targetAmount - futureValueOfCurrentInvestments)
+  const additionalAmountNeeded = Math.max(
+    0,
+    targetAmount - futureValueOfCurrentInvestments
+  );
 
   // Calculate annual payment required using PMT formula
   if (annualReturnRate === 0) {
-    return additionalAmountNeeded / yearsToRetirement
+    return additionalAmountNeeded / yearsToRetirement;
   }
 
   const annualPayment =
-    (additionalAmountNeeded * annualReturnRate) / (Math.pow(1 + annualReturnRate, yearsToRetirement) - 1)
+    (additionalAmountNeeded * annualReturnRate) /
+    (Math.pow(1 + annualReturnRate, yearsToRetirement) - 1);
 
-  return Math.max(0, annualPayment)
+  return Math.max(0, annualPayment);
 }
 
 // Generate projection data for chart
@@ -479,21 +613,20 @@ function generateProjectionData(
   currentInvestments,
   annualSavings,
   annualReturnRate,
-  fireTarget,
+  fireTarget
 ) {
-  const data = []
-  let netWorth = currentInvestments
+  const data = [];
+  let netWorth = currentInvestments;
 
   for (let age = currentAge; age <= retirementAge + 5; age++) {
     data.push({
       age,
       netWorth,
       fireTarget,
-    })
+    });
 
-    netWorth = netWorth * (1 + annualReturnRate) + annualSavings
+    netWorth = netWorth * (1 + annualReturnRate) + annualSavings;
   }
 
-  return data
+  return data;
 }
-
