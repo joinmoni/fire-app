@@ -65,7 +65,7 @@ export function MoniLayout({ children }: MoniLayoutProps) {
               size="sm"
               onClick={() => router.push("/fire-calculator")}
             >
-              FIRE Calculator
+              What's my #?
             </Button>
             <Button
               variant="outline"
@@ -102,7 +102,7 @@ export function MoniLayout({ children }: MoniLayoutProps) {
                 <DropdownMenuItem
                   onClick={() => router.push("/fire-calculator")}
                 >
-                  FIRE Calculator
+                  What's my #?
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleSignOut}
