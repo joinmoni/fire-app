@@ -159,28 +159,6 @@ export function AuthScreen() {
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center p-4 space-y-4">
-          <Card className="w-full max-w-md bg-moni-green/10 border-moni-green">
-            <CardHeader className="text-center space-y-2">
-              <CardDescription className="text-black">
-                Join our exclusive webinar on achieving Financial Independence
-                and Retiring Early on{" "}
-                <span className="font-semibold">Mar. 27th</span>.
-              </CardDescription>
-              <Link
-                href="https://lu.ma/asd74i6j"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={buttonVariants({
-                  variant: "default",
-                  className:
-                    "bg-moni-orange hover:bg-moni-orange/90 text-white mt-2 w-full",
-                })}
-              >
-                Register for Webinar
-              </Link>
-            </CardHeader>
-          </Card>
-
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-6">
